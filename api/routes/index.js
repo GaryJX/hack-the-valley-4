@@ -6,6 +6,7 @@ const firebase = require("firebase");
 // Required for side-effects
 require("firebase/firestore");
 const { check, validationResult } = require('express-validator');
+let {PythonShell} = require('python-shell');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -61,5 +62,46 @@ router.post('/ingest/addArticle', [
     db.collection('articles').add(article);
     res.json(article);
 });
+
+router.post('/ingest/processText', [
+  check('title').isString(),
+  check('fullText').isString(),
+  check('author').isString(),
+  check('timestamp').isInt()],
+  function (req, res, next) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) return res.status(400).json({errors: errors});
+
+    var article = {
+      title: req.body.title,
+      fullText: req.body.fullText,
+      author: req.body.author,
+      timestamp: req.body.timestamp
+    }
+
+    processText();
+    res.json(article);
+});
+
+
+/**
+ * Runs the NLP python script with the given article.
+ * @param {article} article 
+ */
+function processText(article) {
+  var options = {
+    args: ['arg1', 'arg2 wow', 'arg3']
+  }
+
+  // TODO
+  PythonShell.run('processText.py', options, function (error, results) {
+    if(error) throw error;
+    console.log("results..." + results);
+
+    // Set result to article.summarizedText
+    // Save the article to db.
+  });
+}
+
 
 module.exports = router;
