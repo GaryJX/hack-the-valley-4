@@ -71,20 +71,22 @@ router.post('/ingest/addArticle', [
 
 router.get('/articles',[
   check('numArticles').isInt(),
+  check('lastTimestamp').isInt(),
   check('preferredCategories').isString()], function(req,res,next){
     const errors = validationResult(req);
     if(!errors.isEmpty()) return res.status(400).json({errors:errors});
 
     let numArticles = req.query.numArticles;
     let preferredCategories = req.query.preferredCategories.split(',');
-    
+    let lastTimestamp = req.query.lastTimestamp;
     
     console.log(numArticles);
     let resp = [];
     //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
     db.collection('articles')
-    .orderBy('timestamp')
-    .limitToLast(parseInt(numArticles))
+    .orderBy('timestamp','desc')
+    .startAfter(max(0, parseInt(lastTimestamp)))
+    .limit(parseInt(numArticles))
     //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
     .get().then((snapshot) => {
       snapshot.docs.forEach(doc => {
@@ -92,9 +94,7 @@ router.get('/articles',[
         resp.push(data);
       })
       res.send(resp);
-    })
-
-    
+    }) 
   });
 
 /**
