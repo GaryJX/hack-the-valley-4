@@ -6,7 +6,7 @@ const firebase = require("firebase");
 // Required for side-effects
 require("firebase/firestore");
 const { check, validationResult } = require('express-validator');
-var PythonShell = require('python-shell');
+let {PythonShell} = require('python-shell');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -79,9 +79,8 @@ router.post('/ingest/processText', [
       timestamp: req.body.timestamp
     }
 
-    res.json(article);
-
     processText();
+    res.json(article);
 });
 
 
@@ -91,13 +90,16 @@ router.post('/ingest/processText', [
  */
 function processText(article) {
   var options = {
-    args: ['arg1']
+    args: ['arg1', 'arg2 wow', 'arg3']
   }
 
   // TODO
   PythonShell.run('processText.py', options, function (error, results) {
     if(error) throw error;
-    console.log(results);
+    console.log("results..." + results);
+
+    // Set result to article.summarizedText
+    // Save the article to db.
   });
 }
 
