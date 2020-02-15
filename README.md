@@ -6,3 +6,4 @@ Github repository for our project for Hack the Valley 4.
 * Ryan Sue
 * Robert Nichita
 * Gary Xie
+* RishabhKantSharma
