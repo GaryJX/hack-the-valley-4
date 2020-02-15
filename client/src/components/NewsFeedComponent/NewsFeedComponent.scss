@@ -1,0 +1,84 @@
+.news-feed {
+    padding-top: 75px;
+    &-header {
+        font-size: 30px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .articles-container {
+        flex: 1;
+        display: grid;
+        padding: 20px;
+        // grid-template-columns: minmax(200px, 1fr) minmax(200px, 1fr) minmax(200px, 1fr);
+        grid-template-columns: repeat(auto-fit, minMax(400px, 1fr));
+        grid-column-gap: 20px;
+        grid-row-gap: 20px;
+    }
+    
+    .news-article-container {
+        background-color: transparent;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        border-radius: 6px;
+        perspective: 1000px;
+        // box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        
+        &:hover {
+            // box-shadow: 0 4px 8px 0 rgba(72, 52, 212, 0.2), 0 6px 20px 0 rgba(72, 52, 212, 0.19);
+
+            .news-article {
+                transform: rotateY(180deg);
+            }
+        }
+        .news-article {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            border-radius: 6px;
+
+
+            &--header {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                -webkit-backface-visibility: hidden; /* Safari */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                backface-visibility: hidden;
+
+                font-size: 30px;
+                font-weight: bold;
+                // background-color: #4834d4; /* fallback for old browsers */
+                background: -webkit-linear-gradient(to bottom right, #1c92d2, #f2fcfe); /* Chrome 10-25, Safari 5.1-6 */
+                background: linear-gradient(to bottom right, #1c92d2, #f2fcfe); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+              
+                text-align: center;
+                padding: 20px 0;
+                border-radius: 6px;
+                color: white;
+            }
+    
+            &--summary {
+                // padding-top: 20px;
+                // position: absolute;
+                width: 100%;
+                height: 100%;
+                border-radius: 6px;
+                padding: 20px;
+
+                -webkit-backface-visibility: hidden; /* Safari */
+
+                backface-visibility: hidden;
+                transform: rotateY(180deg);
+
+            }
+        }
+    }
+}
