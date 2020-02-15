@@ -4,6 +4,9 @@
     justify-content: center;
     width: 100vw;
     height: 100vh;
+    background-color: #0f0930;
+    color: white;
+
 
     .details {
         flex: 1;
@@ -27,7 +30,8 @@
             align-self: flex-start;
             cursor: pointer;
             background-color: #4834d4;
-            padding: 12px;
+            padding: 12px 20px;
+            margin-top: 10px;
             border-radius: 4px;
             color: white;
             font-weight: 500;

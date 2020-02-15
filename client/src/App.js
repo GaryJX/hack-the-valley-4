@@ -38,7 +38,7 @@ export default class App extends React.Component {
         <NavbarComponent loggedIn={loggedIn}/>
         {
           loading ?
-          <div class='loading-container'><img src={LoadingIcon} /></div> :
+          <div className='loading-container'><img src={LoadingIcon} /></div> :
           loggedIn ? 
           <NewsFeedComponent /> :
           <Homepage />
