@@ -5,6 +5,7 @@ var serviceAccount = require("../serviceAccount.json");
 const firebase = require("firebase");
 // Required for side-effects
 require("firebase/firestore");
+const { check, validationResult } = require('express-validator');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -26,16 +27,39 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/object', function(req, res, next) {
+router.post('/object', function (req, res, next) {
 
   db.collection("objectdump").add(
     req.body
   )
   res.json(req.body);
+});
+
+
+router.post('/ingest/addArticle', [
+  check('title').isString(),
+  check('fullText').isString(),
+  check('summarizedText').isString(),
+  check('author').isString(),
+  check('timestamp').isInt()],
+  function (req, res, next) {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) return res.status(400).json({errors: errors});
+
+    var article = {
+      title: req.body.title,
+      fullText: req.body.fullText,
+      summarizedText: req.body.summarizedText,
+      author: req.body.author,
+      timestamp: req.body.timestamp
+    }
+
+    db.collection('articles').add(article);
+    res.json(article);
 });
 
 module.exports = router;
