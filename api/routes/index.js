@@ -1,5 +1,7 @@
 var express = require('express');
 const { check, validationResult } = require('express-validator');
+
+
 var router = express.Router();
 let {PythonShell} = require('python-shell');
 var admin = require("firebase-admin");
@@ -67,6 +69,33 @@ router.post('/ingest/addArticle', [
     res.status(200);
 });
 
+router.get('/articles',[
+  check('numArticles').isInt(),
+  check('preferredCategories').isString()], function(req,res,next){
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) return res.status(400).json({errors:errors});
+
+    let numArticles = req.query.numArticles;
+    let preferredCategories = req.query.preferredCategories.split(',');
+    
+    
+    console.log(numArticles);
+    let resp = [];
+    //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
+    db.collection('articles')
+    .orderBy('timestamp')
+    .limitToLast(parseInt(numArticles))
+    //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
+    .get().then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        let data = doc.data();
+        resp.push(data);
+      })
+      res.send(resp);
+    })
+
+    
+  });
 
 /**
  * Runs the NLP python script with the given article.
