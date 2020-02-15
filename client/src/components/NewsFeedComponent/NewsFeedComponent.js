@@ -39,62 +39,63 @@ export default class NewsFeedComponent extends React.Component {
         const width = window.innerWidth;
         this.state = {
             // Test Mock Data
-            articles: [
-                {
-                    title: 'Clickbait title 1',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },
-                {
-                    title: 'Clickbait title 2',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },                
-                {
-                    title: 'Clickbait title 3',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },
-                {
-                    title: 'Clickbait title 1',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },
-                {
-                    title: 'Clickbait title 2',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },                
-                {
-                    title: 'Clickbait title 3',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, cing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },
-                {
-                    title: 'Clickbait title 1',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },
-                {
-                    title: 'Clickbait title 2',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },                
-                {
-                    title: 'Clickbait title 2',
-                    summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
-                    timestamp: 1581795106000,
-                },     
-            ],
+            // articles: [
+            //     {
+            //         title: 'Clickbait title 1',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },
+            //     {
+            //         title: 'Clickbait title 2',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },                
+            //     {
+            //         title: 'Clickbait title 3',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },
+            //     {
+            //         title: 'Clickbait title 1',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },
+            //     {
+            //         title: 'Clickbait title 2',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },                
+            //     {
+            //         title: 'Clickbait title 3',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, cing elit, sed do eiusmod tempor incididunt consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },
+            //     {
+            //         title: 'Clickbait title 1',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },
+            //     {
+            //         title: 'Clickbait title 2',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link: 'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },                
+            //     {
+            //         title: 'Clickbait title 2',
+            //         summarizedText: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            //         link:  'https://www.cnn.com/2020/02/15/opinions/presidents-day-george-washington-real-story-coe-carr/index.html',
+            //         timestamp: 1581795106000,
+            //     },     
+            // ],
+            articles: []
         }
 
         this.getNewsArticles();
@@ -102,8 +103,10 @@ export default class NewsFeedComponent extends React.Component {
 
     getNewsArticles = () => {
         // TODO: Grab data from /articles endpoint, and populate my state with it
-        axios.get('/articles').then((res) => {
+        axios.get('http://localhost:3000/articles?numArticles=3').then((res) => {
             console.log(res);
+            console.log('Received data');
+
         }).catch((err) => {
             console.error(err);
 
