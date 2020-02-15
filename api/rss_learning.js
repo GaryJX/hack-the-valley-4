@@ -40,6 +40,10 @@ var newYorkTimesXML = ['https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xm
 'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',
 'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml']
 
+var cbcXML = ['https://www.cbc.ca/cmlink/rss-topstories', 'https://rss.cbc.ca/lineup/world.xml',
+'https://rss.cbc.ca/lineup/canada.xml', 'https://rss.cbc.ca/lineup/politics.xml', 'https://rss.cbc.ca/lineup/business.xml',
+'https://rss.cbc.ca/lineup/health.xml', 'https://rss.cbc.ca/lineup/arts.xml', 'https://rss.cbc.ca/lineup/technology.xml']
+
 /**
  * {
   creator: 'Peter Libbey',
@@ -100,12 +104,46 @@ var newYorkTimesParser = async function () {
     });
 }
 
+var cbcParser = async function() {
+    cbcXML.forEach(async link => {
+        let feed = await parser.parseURL(link);
+        feed.items.forEach(item => {
+            var timestamp = new Date(item.isoDate || '').getTime(); // TODO: Parse item.isoDate to time in millis.
+
+            var article = {
+                title: item.title || '',
+                fullText: item.contentSnippet || '',
+                author: item.creator || '',
+                timestamp: timestamp || '',
+                link: item.link || ''
+            }
+
+            // Check if this article exists in db.
+            let query = db.collection('articles').where('fullText', '==', article.fullText).get().then(snapshot => {
+                
+                if(!snapshot.empty) {
+                    console.log(`${article.title} exists in database, not adding!`);
+                    return; // Article exists.
+                }
+                
+                // Does not exist... let's add it. No need to summarize now.
+                db.collection('articles').add(article);
+                console.log(`Added article: ${article.title}`); 
+
+            }).catch(err => {
+                console.log(`Error checking if article ${article.title} exists`, err);
+            });
+        });
+    });
+}
+
 var parseServiceMapping = {
-    'newyorktimes': newYorkTimesParser
+    'newyorktimes': newYorkTimesParser,
+    'cbc': cbcParser
 }
 
 function populateFromService(key) {
     parseServiceMapping[key]();
 }
 
-populateFromService('newyorktimes');
+populateFromService('cbc');
