@@ -1,13 +1,14 @@
 var express = require('express');
+const { check, validationResult } = require('express-validator');
 var router = express.Router();
+let {PythonShell} = require('python-shell');
 var admin = require("firebase-admin");
 var serviceAccount = require("../serviceAccount.json");
 const firebase = require("firebase");
 // Required for side-effects
 require("firebase/firestore");
-const { check, validationResult } = require('express-validator');
-let {PythonShell} = require('python-shell');
 
+// Initialize stuff
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://ingest-1fea9.firebaseio.com'
@@ -27,11 +28,12 @@ firebase.initializeApp(firebaseConfig);
 
 var db = firebase.firestore();
 
-/* GET home page. */
+// Home Page
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+// Object Dump
 router.post('/object', function (req, res, next) {
 
   db.collection("objectdump").add(
@@ -40,30 +42,12 @@ router.post('/object', function (req, res, next) {
   res.json(req.body);
 });
 
-
+/**
+ * addArticle
+ * 
+ * When given an article, validate, process then put in db.
+ */
 router.post('/ingest/addArticle', [
-  check('title').isString(),
-  check('fullText').isString(),
-  check('summarizedText').isString(),
-  check('author').isString(),
-  check('timestamp').isInt()],
-  function (req, res, next) {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) return res.status(400).json({errors: errors});
-
-    var article = {
-      title: req.body.title,
-      fullText: req.body.fullText,
-      summarizedText: req.body.summarizedText,
-      author: req.body.author,
-      timestamp: req.body.timestamp
-    }
-
-    db.collection('articles').add(article);
-    res.json(article);
-});
-
-router.post('/ingest/processText', [
   check('title').isString(),
   check('fullText').isString(),
   check('author').isString(),
@@ -80,7 +64,7 @@ router.post('/ingest/processText', [
     }
 
     processText();
-    res.json(article);
+    res.status(200);
 });
 
 
@@ -96,10 +80,12 @@ function processText(article) {
   // TODO
   PythonShell.run('processText.py', options, function (error, results) {
     if(error) throw error;
-    console.log("results..." + results);
 
     // Set result to article.summarizedText
+    article.summarizedText = results;
+
     // Save the article to db.
+    db.collection('articles').add(article);
   });
 }
 
