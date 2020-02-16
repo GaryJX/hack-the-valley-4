@@ -46,7 +46,7 @@ export default class NewsFeedComponent extends React.Component {
     }
 
     getNewsArticles = () => {
-        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&userId=${this.TODOuserID}&preferredCategories=temp`;
+        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&userId=${this.props.userId}&preferredCategories=temp`;
         axios.get(url).then((res) => {
             console.log(res.data);
             if (res.data.length > 0) {
@@ -78,8 +78,6 @@ export default class NewsFeedComponent extends React.Component {
 
     ArticleTags = (props) => {
         let { tags } = props;
-        // TODO: Remove this
-        tags = ['News/Politics', 'Sports']
 
         return (
             <div className='article-tags'>
@@ -123,8 +121,7 @@ export default class NewsFeedComponent extends React.Component {
                         <ExternalIcon />
                         {article.summarizedText ? article.summarizedText : article.fullText}
                         {
-                            // article.tags && article.tags.length > 0 ?
-                            true ?
+                            article.tags && article.tags.length > 0 ?
                             <this.ArticleTags tags={article.tags} /> :
                             null
                         }
