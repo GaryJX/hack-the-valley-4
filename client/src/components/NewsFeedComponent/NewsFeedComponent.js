@@ -117,7 +117,7 @@ export default class NewsFeedComponent extends React.Component {
                     <div className='news-article--summary'>
                         <div className='news-article--summary-title'>Summary</div>
                         <ExternalIcon />
-                        {article.summarizedText ? article.fullText : article.fullText}
+                        {article.summarizedText ? <div dangerouslySetInnerHTML={{__html: article.summarizedText}} /> : <div dangerouslySetInnerHTML={{__html: article.fullText}}/>}
                         {
                             article.tags && article.tags.length > 0 ?
                             <this.ArticleTags tags={article.tags} /> :
