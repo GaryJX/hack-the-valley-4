@@ -1,7 +1,7 @@
 import React from "react";
 import './NavbarComponent.scss';
 import { SignupLoginModal } from '../';
-import logo from '../../assets/logo4.png';
+import logo from '../../assets/logo.png';
 const firebase = require('firebase/app');
 window.firebase = firebase;
 
@@ -33,7 +33,6 @@ export default class NavbarComponent extends React.Component {
   }
 
   handleScroll = () => {
-    // console.log('SCROLLED!');
     const { scrollDirection, previousFromTop } = this.state;
     const fromTop = window.scrollY;
 
@@ -65,7 +64,7 @@ export default class NavbarComponent extends React.Component {
   }
 
   render() {
-    const { scrollDirection, navActive, showModal, isLoginForm } = this.state;
+    const { scrollDirection, navActive, showModal } = this.state;
     const { loggedIn } = this.props;
 
     return (

@@ -4,7 +4,6 @@ import axios from 'axios';
 import Masonry from 'react-masonry-css';
 import LoadingIcon from '../../assets/loading.svg';
 
-
 const NUM_ARTICLES = 12;
 
 export default class NewsFeedComponent extends React.Component {
@@ -46,22 +45,14 @@ export default class NewsFeedComponent extends React.Component {
     }
 
     getNewsArticles = () => {
-        console.log('Called real news articles')
-        // TODO: Grab data from /articles endpoint, and populate my state with it
         const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&preferredCategories=helloworld`;
-        console.log(url);
         axios.get(url).then((res) => {
             if (res.data.length > 0) {
                 this.lastTimestamp = res.data[res.data.length-1].timestamp;
                 this.setState({ articles: this.state.articles.concat(res.data) });
             }
-            console.log(res);
-            console.log('Received data');
-            console.log(res.data[res.data.length - 1]);
-
         }).catch((err) => {
             console.error(err);
-
         }).finally(() => {
             this.setState({ loading: false });
         });
@@ -101,7 +92,6 @@ export default class NewsFeedComponent extends React.Component {
                     </div>
                     <div className='news-article--summary'>
                         <div className='news-article--summary-title'>Summary</div>
-                        {/* Change to summarizedText */}
                         {article.summarizedText ? article.summarizedText : article.fullText}
                         {
                             article.tags && article.tags.length > 0 ?
@@ -145,36 +135,3 @@ export default class NewsFeedComponent extends React.Component {
         }
     }
 }
-
-const styles = {
-    container: {
-        justifyContent: 'space-around',
-        alignItems: 'flex-start',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        // border: '0.5px solid black',
-    },
-    containerGridLeft: {
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        border: '0.5px solid black',
-    },
-    containerGridRight: {
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        border: '0.5px solid black',
-    },
-};
