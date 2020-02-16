@@ -33,7 +33,7 @@ def read_article(file_name):
 
 
 text = read_article("test.txt")
-#text = sys.argv[0]
+#text = sys.argv[1]
 
 
 # In[92]:
@@ -219,7 +219,7 @@ sentences = sent_tokenize(text)
 sentence_scores = _score_sentences(sentences, freq_table)
 #print(sentence_scores)
 threshold = _find_average_score(sentence_scores)
-summary = _generate_summary(sentences, sentence_scores, 1.8 * threshold)
+summary = _generate_summary(sentences, sentence_scores, 1.3 * threshold)
 
 nlp_data["summary"] = summary
 
@@ -385,7 +385,7 @@ def extract_based_on_salience(corpus_dict):
     
 entity_data = extract_based_on_salience(cd)
 
-npl_data["entity_data"] = entity_data
+nlp_data["entity_data"] = entity_data
 
 
 # ### Entity Extraction
