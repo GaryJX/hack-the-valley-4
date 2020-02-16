@@ -1,10 +1,7 @@
 import React from 'react';
-import { NewsFeedComponent } from '../../components';
 import './Homepage.scss';
 import contentSVG from '../../assets/content.svg';
 import { SignupLoginModal } from '../../components';
-
-// import ContentSVG from '../../assets/ContentSVG';
 
 export default class Homepage extends React.Component {
     constructor(props) {
@@ -12,9 +9,6 @@ export default class Homepage extends React.Component {
         this.state = {
             showModal: false,
         };
-        // TODO: On constructor (or componentDidMount), check if the authorization token exists
-        // if yes, then they are logged in and display the articles
-        // Else, display a homepage asking them to login/create an account (using Firebase)
     }
 
     render() {

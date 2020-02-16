@@ -1,6 +1,4 @@
 $backgroundColor: #4834d4;
-// $backgroundColor: rgba(55, 54, 45, 0.36);
-
 $sansSerifFont: 'Poppins', sans-serif;
 $greyColor: #a8b2d1;
 $accentColor: #64ffda;
@@ -28,7 +26,6 @@ header {
     width: 100%;
     height: 65px;
     background-color: $backgroundColor;
-    // background-color: white;
     transition: all 0.25s ease-in-out;
     z-index: 1;
 
