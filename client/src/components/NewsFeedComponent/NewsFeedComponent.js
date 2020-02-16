@@ -46,7 +46,7 @@ export default class NewsFeedComponent extends React.Component {
     }
 
     getNewsArticles = () => {
-        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&userId=${this.props.userId}&preferredCategories=temp`;
+        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&userId=${this.props.userId}`;
         axios.get(url).then((res) => {
             console.log(res.data);
             if (res.data.length > 0) {
