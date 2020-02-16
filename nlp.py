@@ -33,7 +33,7 @@ def read_article(file_name):
 
 
 # text = read_article("test.txt")
-text = sys.argv[0]
+text = sys.argv[1]
 
 
 # In[92]:
