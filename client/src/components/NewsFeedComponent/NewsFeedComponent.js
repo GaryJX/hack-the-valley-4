@@ -32,7 +32,6 @@ export default class NewsFeedComponent extends React.Component {
 
     onScroll = () => {
         if (this.hasReachedBottom()) {
-            console.log('Reached bottom!');
             this.getNewsArticles();
         }
     }
@@ -48,7 +47,6 @@ export default class NewsFeedComponent extends React.Component {
     getNewsArticles = () => {
         const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&userId=${this.props.userId}`;
         axios.get(url).then((res) => {
-            console.log(res.data);
             if (res.data.length > 0) {
                 this.lastTimestamp = res.data[res.data.length-1].timestamp;
                 this.setState({ articles: this.state.articles.concat(res.data) });
@@ -119,7 +117,7 @@ export default class NewsFeedComponent extends React.Component {
                     <div className='news-article--summary'>
                         <div className='news-article--summary-title'>Summary</div>
                         <ExternalIcon />
-                        {article.summarizedText ? article.summarizedText : article.fullText}
+                        {article.summarizedText ? article.fullText : article.fullText}
                         {
                             article.tags && article.tags.length > 0 ?
                             <this.ArticleTags tags={article.tags} /> :
