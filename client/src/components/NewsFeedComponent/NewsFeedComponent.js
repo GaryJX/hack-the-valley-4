@@ -45,8 +45,9 @@ export default class NewsFeedComponent extends React.Component {
     }
 
     getNewsArticles = () => {
-        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&preferredCategories=helloworld`;
+        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&userId=${this.TODOuserID}&preferredCategories=temp`;
         axios.get(url).then((res) => {
+            console.log(res.data);
             if (res.data.length > 0) {
                 this.lastTimestamp = res.data[res.data.length-1].timestamp;
                 this.setState({ articles: this.state.articles.concat(res.data) });
@@ -58,10 +59,36 @@ export default class NewsFeedComponent extends React.Component {
         });
     }
 
-    openArticleLink = (link) => {
-        if (link) {
-            window.open(link, "_blank");
+    openArticleLink = (article) => {
+        if (article.link) {
+            if (article.tags) {
+                const url = 'http://localhost:3000/stats';
+                const data = {
+                    userId: this.props.userId,
+                    categories: article.tags
+                };
+                axios.post(url, data).catch((err) => {
+                    console.error(err);
+                });
+            }
+            window.open(article.link, "_blank");
         }
+    }
+
+    ArticleTags = (props) => {
+        let { tags } = props;
+        // TODO: Remove this
+        tags = ['News/Politics', 'Sports']
+
+        return (
+            <div className='article-tags'>
+                {
+                    tags.map((item, index) => (
+                    <div className='article-tag'>{item}</div>
+                    ))
+                }
+            </div>
+        );
     }
 
     NewsFeedItem = (props) => {
@@ -80,7 +107,7 @@ export default class NewsFeedComponent extends React.Component {
         }
 
         return (
-            <div className='news-article-container' onClick={() => this.openArticleLink(article.link)}>
+            <div className='news-article-container' onClick={() => this.openArticleLink(article)}>
                 <div className='news-article'>
                     <div className='news-article--header'>
                         <div className='news-article--header-title'>{article.title}</div>
@@ -94,8 +121,9 @@ export default class NewsFeedComponent extends React.Component {
                         <div className='news-article--summary-title'>Summary</div>
                         {article.summarizedText ? article.summarizedText : article.fullText}
                         {
-                            article.tags && article.tags.length > 0 ?
-                            <div>TODO: Article tags</div>:
+                            // article.tags && article.tags.length > 0 ?
+                            true ?
+                            <this.ArticleTags tags={article.tags} /> :
                             null
                         }
                     </div>
@@ -112,7 +140,7 @@ export default class NewsFeedComponent extends React.Component {
         };
 
         if (this.state.loading) {
-            return <div className='loading-container'><img src={LoadingIcon} /></div>
+            return <div className='loading-container'><img alt='loading' src={LoadingIcon} /></div>
         } else {
             return (
                 <main className='news-feed'>

@@ -12,13 +12,14 @@ export default class App extends React.Component {
     this.state = {
         loggedIn: false,
         loading: true,
+        userId: null,
     };
 
     this.initialAuth = true;
 
     firebase.auth().onAuthStateChanged((user) => {
       if (user && this.initialAuth) {
-        this.setState({ loggedIn: true });
+        this.setState({ loggedIn: true, userId: user.uid});
       } else {
         this.setState({ loggedIn: false });
       }
@@ -30,15 +31,15 @@ export default class App extends React.Component {
 
 
   render() {
-    const { loggedIn, loading } = this.state;
+    const { loggedIn, loading, userId } = this.state;
     return (
       <>
         <NavbarComponent loggedIn={loggedIn}/>
         {
           loading ?
-          <div className='loading-container'><img src={LoadingIcon} /></div> :
+          <div className='loading-container'><img src={LoadingIcon} alt='loading'/></div> :
           loggedIn ? 
-          <NewsFeedComponent /> :
+          <NewsFeedComponent userId={userId}/> :
           <Homepage />
         }
       </>

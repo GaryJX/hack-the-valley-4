@@ -70,7 +70,7 @@ export default class NavbarComponent extends React.Component {
     return (
       <header className={scrollDirection === 'down' ? 'scrolledDown' : ''}>
         <nav>
-          <div className='nav-header'><img className='nav-logo' src={logo}/><div className='nav-title'>INgest</div></div>
+          <div className='nav-header'><img className='nav-logo' alt='logo' src={logo}/><div className='nav-title'>INgest</div></div>
           <ul className={`nav-list ${navActive ? 'nav-active' : ''}`}>
             <li className='nav-list--item'>
               {
