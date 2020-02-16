@@ -82,19 +82,39 @@ router.get('/articles',[
     
     console.log(numArticles);
     let resp = [];
-    //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
-    db.collection('articles')
-    .orderBy('timestamp','desc')
-    .startAfter(Math.max(0, parseInt(lastTimestamp)))
-    .limit(parseInt(numArticles))
-    //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
-    .get().then((snapshot) => {
-      snapshot.docs.forEach(doc => {
-        let data = doc.data();
-        resp.push(data);
-      })
-      res.send(resp);
-    }) 
+
+    if (parseInt(lastTimestamp) === -1) {
+      console.log(' Last TimeStamp == -1');
+      //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
+      db.collection('articles')
+      .orderBy('timestamp','desc')
+      .startAfter(Math.max(0, parseInt(lastTimestamp)))
+      .limit(parseInt(numArticles))
+      //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
+      .get().then((snapshot) => {
+        snapshot.docs.forEach(doc => {
+          let data = doc.data();
+          resp.push(data);
+        })
+        res.send(resp);
+      }) 
+    } else {
+      console.log(' Last TimeStamp NOT  -1');
+
+      //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
+      db.collection('articles')
+      .orderBy('timestamp','desc')
+      .startAfter(Math.max(0, parseInt(lastTimestamp)))
+      .limit(parseInt(numArticles))
+      //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
+      .get().then((snapshot) => {
+        snapshot.docs.forEach(doc => {
+          let data = doc.data();
+          resp.push(data);
+        })
+        res.send(resp);
+      }) 
+    }
   });
 
 /**

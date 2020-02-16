@@ -1,6 +1,7 @@
 import React from "react";
 import './NavbarComponent.scss';
 import { SignupLoginModal } from '../';
+import logo from '../../assets/logo4.png';
 const firebase = require('firebase/app');
 window.firebase = firebase;
 
@@ -70,12 +71,13 @@ export default class NavbarComponent extends React.Component {
     return (
       <header className={scrollDirection === 'down' ? 'scrolledDown' : ''}>
         <nav>
+          <div className='nav-header'><img className='nav-logo' src={logo}/><div className='nav-title'>INgest</div></div>
           <ul className={`nav-list ${navActive ? 'nav-active' : ''}`}>
             <li className='nav-list--item'>
               {
                 loggedIn ?
                 <div className='logout-btn' onClick={() => firebase.auth().signOut()}>Log out</div> :
-                <div className='nav-modal-btn' onClick={() => this.setState({ showModal: true })}>Sign Up/Log in</div>
+                <div className='nav-modal-btn' onClick={() => this.setState({ showModal: true })}>Sign in or Register</div>
               }
             </li>
           </ul>

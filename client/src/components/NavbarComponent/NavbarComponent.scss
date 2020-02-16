@@ -1,10 +1,12 @@
 $backgroundColor: #4834d4;
+// $backgroundColor: rgba(55, 54, 45, 0.36);
+
 $sansSerifFont: 'Poppins', sans-serif;
 $greyColor: #a8b2d1;
 $accentColor: #64ffda;
 $hoverBackgroundColor: #172a45;
 
-
+@import url('https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Poppins|Space+Mono&display=swap');
 
 @mixin standardBorder {
@@ -48,10 +50,24 @@ header {
         font-size: 13px;
         height: 100%;
 
-        .header-logo {
-            font-family: $sansSerifFont;
-            font-weight: bold;
-            font-size: 25px;
+        .nav-header {
+            display: flex;
+            align-items: center;
+            margin-left: -60px;
+
+            .nav-logo {
+                width: 150px;
+            }
+
+            .nav-title {
+                font-family: 'Odibee Sans', cursive;
+                color: white;
+                font-weight: 500;
+                font-size: 30px;
+                letter-spacing: 1.4px;
+                margin-left: -40px;
+
+            }
         }
 
         .nav-list {

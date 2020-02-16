@@ -2,6 +2,8 @@ import React from 'react';
 import './NewsFeedComponent.scss';
 import axios from 'axios';
 import Masonry from 'react-masonry-css';
+import LoadingIcon from '../../assets/loading.svg';
+
 
 const NUM_ARTICLES = 12;
 
@@ -10,6 +12,7 @@ export default class NewsFeedComponent extends React.Component {
         super(props);
         this.state = {
             articles: [],
+            loading: true,
         }
 
         this.numArticles = NUM_ARTICLES;
@@ -59,6 +62,8 @@ export default class NewsFeedComponent extends React.Component {
         }).catch((err) => {
             console.error(err);
 
+        }).finally(() => {
+            this.setState({ loading: false });
         });
     }
 
@@ -97,7 +102,7 @@ export default class NewsFeedComponent extends React.Component {
                     <div className='news-article--summary'>
                         <div className='news-article--summary-title'>Summary</div>
                         {/* Change to summarizedText */}
-                        {article.fullText} 
+                        {article.summarizedText ? article.summarizedText : article.fullText}
                         {
                             article.tags && article.tags.length > 0 ?
                             <div>TODO: Article tags</div>:
@@ -115,25 +120,29 @@ export default class NewsFeedComponent extends React.Component {
             900: 2,
             600: 1
         };
-        
-        return (
-            <main className='news-feed'>
-                <div className='news-feed-header'>Your Curated News Feed</div>
-                <div className='articles-container'>
-                    <Masonry
-                        breakpointCols={breakpointColumnsObj}
-                        className='masonry-grid'
-                        columnClassName='masonry-grid-column'
-                    >
-                    {
-                        this.state.articles.map((item, index) => (
-                            <this.NewsFeedItem article={item} />
-                        ))
-                    }
-                    </Masonry>
-                </div>
-            </main>
-        );
+
+        if (this.state.loading) {
+            return <div className='loading-container'><img src={LoadingIcon} /></div>
+        } else {
+            return (
+                <main className='news-feed'>
+                    <div className='news-feed-header'>Your News Feed</div>
+                    <div className='articles-container'>
+                        <Masonry
+                            breakpointCols={breakpointColumnsObj}
+                            className='masonry-grid'
+                            columnClassName='masonry-grid-column'
+                        >
+                        {
+                            this.state.articles.map((item, index) => (
+                                <this.NewsFeedItem article={item} />
+                            ))
+                        }
+                        </Masonry>
+                    </div>
+                </main>
+            );
+        }
     }
 }
 

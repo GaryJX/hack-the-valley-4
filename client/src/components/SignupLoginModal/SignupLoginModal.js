@@ -43,46 +43,6 @@ const config = ({
 // TODO: Change this to a function
 export default class SignupLoginModal extends React.Component {
 
-    LoginForm = () => {
-        const { handleClose } = this.props;
-        return (
-            <>
-                <Modal.Header closeButton>
-                    <Modal.Title>Login</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Login Form here
-                    
-                    <div id='firebaseui-auth-container'></div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={handleClose}>Close</button>
-                    <button onClick={() => console.log('TODO: Implement Create Account Functionality')}>Submit</button>
-                </Modal.Footer>
-            </>
-        );
-    }
-
-    SignupForm = () => {
-        const { handleClose } = this.props;
-        return (
-            <>
-                <Modal.Header closeButton>
-                    <Modal.Title>Sign Up</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Sign up form here
-                    <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
-                    <div id='firebaseui-auth-container'></div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={handleClose}>Close</button>
-                    <button onClick={() => console.log('TODO: Implement Create Account Functionality')}>Submit</button>
-                </Modal.Footer>
-            </>
-        );
-    }
-
     render() {
         const { displayModal, handleClose, isLoginForm } = this.props;
         return (
