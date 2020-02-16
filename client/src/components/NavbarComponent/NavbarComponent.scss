@@ -129,3 +129,12 @@ header {
 
     }
 }
+
+@media only screen and (max-width: 1024px) {
+    nav {
+        padding: 0 25px !important;
+    }
+    .nav-modal-btn, .logout-btn {
+        font-size: 12px !important;
+    }
+}

@@ -35,6 +35,7 @@ def read_article(file_name):
 text = read_article("test.txt")
 words = text.split(" ")
 print(len(words))
+
 #text = sys.argv[1]
 
 
@@ -242,7 +243,6 @@ for x in range(12, 19, 1):
         best_param = param
 
 summary = _generate_summary(sentences, sentence_scores, best_param * threshold)
-    
 
 nlp_data["summary"] = summary
 print(summary)

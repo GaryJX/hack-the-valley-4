@@ -55,3 +55,23 @@
         width: 35vw;
     }
 }
+
+@media only screen and (max-width: 768px) {
+    .home-page {
+        flex-direction: column;
+
+        .details {
+            padding-right: 40px;
+
+            &--title {
+                padding-top: 100px;
+                margin-right: -10px;
+                font-size: 35px;    
+            }
+        }
+
+        .content-svg {
+            width: 300px;
+        }
+    }
+}

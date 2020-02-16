@@ -90,49 +90,39 @@ router.post('/ingest/addArticle', [
 
 router.get('/articles', [
   check('numArticles').isInt(),
-  check('lastTimestamp').isInt(),
-  check('preferredCategories').isString()], function (req, res, next) {
+  check('lastTimestamp').isInt()], function(req,res,next){
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors });
 
     let numArticles = req.query.numArticles;
-    let preferredCategories = req.query.preferredCategories.split(',');
     let lastTimestamp = req.query.lastTimestamp;
 
     console.log(numArticles);
     let resp = [];
-
+    //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
     if (parseInt(lastTimestamp) === -1) {
-      console.log(' Last TimeStamp == -1');
-      //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
       db.collection('articles')
-        .orderBy('timestamp', 'desc')
-        .startAfter(Math.max(0, parseInt(lastTimestamp)))
-        .limit(parseInt(numArticles))
-        //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
-        .get().then((snapshot) => {
-          snapshot.docs.forEach(doc => {
-            let data = doc.data();
-            resp.push(data);
-          })
-          res.send(resp);
+      .orderBy('timestamp','desc')
+      .limit(parseInt(numArticles))
+      .get().then((snapshot) => {
+        snapshot.docs.forEach(doc => {
+          let data = doc.data();
+          resp.push(data);
         })
+        res.send(resp);
+      })
     } else {
-      console.log(' Last TimeStamp NOT  -1');
-
-      //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
       db.collection('articles')
-        .orderBy('timestamp', 'desc')
-        .startAfter(Math.max(0, parseInt(lastTimestamp)))
-        .limit(parseInt(numArticles))
-        //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
-        .get().then((snapshot) => {
-          snapshot.docs.forEach(doc => {
-            let data = doc.data();
-            resp.push(data);
-          })
-          res.send(resp);
+      .orderBy('timestamp','desc')
+      .startAfter(Math.max(0, parseInt(lastTimestamp)))
+      .limit(parseInt(numArticles))
+      .get().then((snapshot) => {
+        snapshot.docs.forEach(doc => {
+          let data = doc.data();
+          resp.push(data);
         })
+        res.send(resp);
+      }) 
     }
   });
 
