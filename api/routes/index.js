@@ -71,13 +71,11 @@ router.post('/ingest/addArticle', [
 
 router.get('/articles',[
   check('numArticles').isInt(),
-  check('lastTimestamp').isInt(),
-  check('preferredCategories').isString()], function(req,res,next){
+  check('lastTimestamp').isInt()], function(req,res,next){
     const errors = validationResult(req);
     if(!errors.isEmpty()) return res.status(400).json({errors:errors});
 
     let numArticles = req.query.numArticles;
-    let preferredCategories = req.query.preferredCategories.split(',');
     let lastTimestamp = req.query.lastTimestamp;
     
     console.log(numArticles);
@@ -87,7 +85,6 @@ router.get('/articles',[
     .orderBy('timestamp','desc')
     .startAfter(Math.max(0, parseInt(lastTimestamp)))
     .limit(parseInt(numArticles))
-    //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
     .get().then((snapshot) => {
       snapshot.docs.forEach(doc => {
         let data = doc.data();
