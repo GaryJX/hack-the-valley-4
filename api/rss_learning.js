@@ -126,8 +126,7 @@ var cnnParser = async function () {
                         return; // Article exists.
                     }
 
-                    request(aItem... Not saving in DB");
-                    // console.dir(article);rticle.link, function (err, res, body) {
+                    request(article.link, function (err, res, body) {
                         var dom = domParser.parseFromString(body);
                         var articleBody = dom.getElementsByClassName('zn-body__paragraph');
                         if (articleBody) {
