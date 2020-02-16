@@ -1,10 +1,13 @@
 let Parser = require('rss-parser');
 var parser = new Parser();
 
-const request = require('request');
-
 var DomParser = require('dom-parser');
 var domParser = new DomParser();
+
+let { PythonShell } = require('python-shell');
+
+const request = require('request');
+
 const firebase = require("firebase");
 
 var firebaseConfig = {
@@ -18,9 +21,7 @@ var firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 var db = firebase.firestore();
-
 
 // Constants
 var newYorkTimesXML = ['https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',
@@ -48,7 +49,7 @@ var cbcXML = ['https://www.cbc.ca/cmlink/rss-topstories', 'https://rss.cbc.ca/li
     'https://rss.cbc.ca/lineup/canada.xml', 'https://rss.cbc.ca/lineup/politics.xml', 'https://rss.cbc.ca/lineup/business.xml',
     'https://rss.cbc.ca/lineup/health.xml', 'https://rss.cbc.ca/lineup/arts.xml', 'https://rss.cbc.ca/lineup/technology.xml']
 
-var cnnXML = ['http://rss.cnn.com/rss/cnn_topstories.rss']
+var cnnXML = ['http://rss.cnn.com/rss/cnn_topstories.rss', 'http://rss.cnn.com/rss/cnn_world.rss', 'http://rss.cnn.com/rss/cnn_allpolitics.rss', 'http://rss.cnn.com/rss/cnn_tech.rss', 'http://rss.cnn.com/rss/cnn_health.rss']
 
 function addArticle(article) {
     // Check if this article exists in db.
@@ -67,34 +68,7 @@ function addArticle(article) {
         console.log(`Error checking if article ${article.title} exists`, err);
     });
 }
-/**
- * {
-  creator: 'Peter Libbey',
-  title: 'Martin Luther King Jr. Day: 8 Places in New York to Remember His Legacy',
-  link: 'https://www.nytimes.com/2020/01/16/arts/mlk-day-events-new-york.html?emc=rss&partner=rss',
-  pubDate: 'Thu, 16 Jan 2020 17:20:12 +0000',
-  'dc:creator': 'Peter Libbey',
-  content: 'At events across the city, you can commemorate King’s achievements or follow his example of activism and service.',
-  contentSnippet: 'At events across the city, you can commemorate King’s achievements or follow his example of activism and service.',
-  guid: 'https://www.nytimes.com/2020/01/16/arts/mlk-day-events-new-york.html',
-  categories: [
-    { _: 'Brooklyn Academy of Music', '$': [Object] },
-    {
-      _: 'Cathedral Church of St John the Divine (Manhattan, NY)',
-      '$': [Object]
-    },
-    { _: 'Manhattan Country School', '$': [Object] },
-    { _: 'Museum of the City of New York', '$': [Object] },
-    {
-      _: 'Schomburg Center for Research in Black Culture',
-      '$': [Object]
-    },
-    { _: 'King, Martin Luther Jr', '$': [Object] }
-  ],
-  isoDate: '2020-01-16T17:20:12.000Z'
-}
 
- */
 var newYorkTimesParser = async function () {
     newYorkTimesXML.forEach(async link => {
         let feed = await parser.parseURL(link);
@@ -140,34 +114,56 @@ var cnnParser = async function () {
                 link: item.guid || ''
             };
 
-            request(article.link, function (err, res, body) {
-                var dom = domParser.parseFromString(body);
-                var articleBody = dom.getElementsByClassName('zn-body__paragraph');
-                if(articleBody) {
-                    console.log("----");
-                    articleBody.forEach(element => {
-                        console.log(element.textContent);
-                    });
-                    console.log("----");
-                }
-                
-            });
+            if (article.title == '' || article.fullText == '' || article.timestamp == '' || article.link == '') {
+                // console.log("Invaid. Item...");
+                // console.dir(item);
+                // console.dir(article);
+            } else {
+                let query = db.collection('articles').where('fullText', '==', article.fullText).get().then(snapshot => {
 
-            
-            // console.log(article.link);
-            // xray('http://google.com', 'title')(function(err, title) {
-                // console.log(title) // Google
-            // })
-            // xray(article.link, 'title')(function (err, result) {
-            //     console.dir(result);
-            // });
-            // request(article.link, function (err, res, body) {
-            //     var soup = new JSSoup(body);
-            //     var tag = soup.findAll('div');
-            //     console.log(tag);
-            // });
-            // addArticle();
+                    if (!snapshot.empty) {
+                        console.log(`${article.title} exists in database, not adding!`);
+                        return; // Article exists.
+                    }
+
+                    request(aItem... Not saving in DB");
+                    // console.dir(article);rticle.link, function (err, res, body) {
+                        var dom = domParser.parseFromString(body);
+                        var articleBody = dom.getElementsByClassName('zn-body__paragraph');
+                        if (articleBody) {
+                            var articleContent = '';
+                            articleBody.forEach(element => {
+                                articleContent += element.textContent + ' ';
+                            });
+
+                            summarizeAndStore(article, articleContent);
+                        }
+                    });
+                }).catch(err => {
+                    console.log(`Error checking if article ${article.title} exists`, err);
+                });
+            }
         });
+    });
+}
+
+function summarizeAndStore(article, articleContent) {
+    PythonShell.run('processText.py', { args: [articleContent] }, function (error, results) {
+        if (error) throw error;
+
+        // Set result to article.summarizedText
+        if (results && results[0]) {
+            article.summarizedText = results[0];
+        }
+
+        if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
+            // console.log("Invaid. Item... Not saving in DB");
+            // console.dir(article);
+        } else {
+            // Save the article to db.
+            console.log(`Saved ${article.title} to db`);
+            db.collection('articles').add(article);
+        }
     });
 }
 
