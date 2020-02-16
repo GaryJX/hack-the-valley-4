@@ -3,7 +3,7 @@ const { check, validationResult } = require('express-validator');
 
 
 var router = express.Router();
-let {PythonShell} = require('python-shell');
+let { PythonShell } = require('python-shell');
 var admin = require("firebase-admin");
 var serviceAccount = require("../serviceAccount.json");
 const firebase = require("firebase");
@@ -44,6 +44,25 @@ router.post('/object', function (req, res, next) {
   res.json(req.body);
 });
 
+// Stats
+router.post('/stats', [
+  check('userId').isString(),
+  check('categories').isArray()
+], function (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors });
+  var userId = req.body.userId;
+  var categories = req.body.categories;
+
+  db.collection('stats').doc(userId).set({ delete: 'me' }, { merge: true });
+  categories.forEach(element => {
+    db.collection('stats').doc(userId).update({
+      categories: firebase.firestore.FieldValue.arrayUnion(element)
+    });
+  });
+  res.status(200).send();
+});
+
 /**
  * addArticle
  * 
@@ -56,7 +75,7 @@ router.post('/ingest/addArticle', [
   check('timestamp').isInt()],
   function (req, res, next) {
     const errors = validationResult(req);
-    if(!errors.isEmpty()) return res.status(400).json({errors: errors});
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors });
 
     var article = {
       title: req.body.title,
@@ -67,17 +86,17 @@ router.post('/ingest/addArticle', [
 
     processText();
     res.status(200);
-});
+  });
 
-router.get('/articles',[
+router.get('/articles', [
   check('numArticles').isInt(),
   check('lastTimestamp').isInt()], function(req,res,next){
     const errors = validationResult(req);
-    if(!errors.isEmpty()) return res.status(400).json({errors:errors});
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors });
 
     let numArticles = req.query.numArticles;
     let lastTimestamp = req.query.lastTimestamp;
-    
+
     console.log(numArticles);
     let resp = [];
     //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
@@ -105,7 +124,7 @@ function processText(article) {
 
   // TODO
   PythonShell.run('processText.py', options, function (error, results) {
-    if(error) throw error;
+    if (error) throw error;
 
     // Set result to article.summarizedText
     article.summarizedText = results;

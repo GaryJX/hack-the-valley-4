@@ -4,16 +4,9 @@ import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import './SignupLoginModal.scss';
 window.firebase = firebase;
-// import firebaseui from 'firebaseui';
 const firebaseui = require('firebaseui');
 
-// import { startFirebaseUI } from '../../helpers/FirebaseHelper';
-// import * as firebase from 'firebase';
-// import * as firebaseui from 'firebaseui';
-
-// const firebase = require('firebase');
 const config = ({
-    // your config
     apiKey: "AIzaSyCVE8qj3LiQRu7nwy4CohDbtsCxS4_65xw",
     authDomain: "ingest-1fea9.firebaseapp.com",
     databaseURL: "https://ingest-1fea9.firebaseio.com/",
@@ -23,7 +16,6 @@ const config = ({
     appId: "1:793791917575:web:dd55b32269a5b09fee84a2"
   })
   
-  // This is our firebaseui configuration object
   const uiConfig = ({
     signInSuccessUrl: '/',
     signInOptions: [
@@ -34,57 +26,15 @@ const config = ({
     ],
     credentialHelper: firebaseui.auth.CredentialHelper.NONE,
     signInFlow: 'popup',
-    tosUrl: '/terms-of-service' // This doesn't exist yet
+    tosUrl: '/terms-of-service'
   })
   
-  // This must run before any other firebase functions
   window.firebase.initializeApp(config)
 
-// TODO: Change this to a function
 export default class SignupLoginModal extends React.Component {
 
-    LoginForm = () => {
-        const { handleClose } = this.props;
-        return (
-            <>
-                <Modal.Header closeButton>
-                    <Modal.Title>Login</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Login Form here
-                    
-                    <div id='firebaseui-auth-container'></div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={handleClose}>Close</button>
-                    <button onClick={() => console.log('TODO: Implement Create Account Functionality')}>Submit</button>
-                </Modal.Footer>
-            </>
-        );
-    }
-
-    SignupForm = () => {
-        const { handleClose } = this.props;
-        return (
-            <>
-                <Modal.Header closeButton>
-                    <Modal.Title>Sign Up</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Sign up form here
-                    <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>
-                    <div id='firebaseui-auth-container'></div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={handleClose}>Close</button>
-                    <button onClick={() => console.log('TODO: Implement Create Account Functionality')}>Submit</button>
-                </Modal.Footer>
-            </>
-        );
-    }
-
     render() {
-        const { displayModal, handleClose, isLoginForm } = this.props;
+        const { displayModal, handleClose } = this.props;
         return (
             <Modal centered show={displayModal} onHide={handleClose}>
                 <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()}/>

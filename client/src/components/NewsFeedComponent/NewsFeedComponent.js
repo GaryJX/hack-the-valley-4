@@ -2,6 +2,8 @@ import React from 'react';
 import './NewsFeedComponent.scss';
 import axios from 'axios';
 import Masonry from 'react-masonry-css';
+import LoadingIcon from '../../assets/loading.svg';
+import ExternalIcon from '../../assets/external';
 
 const NUM_ARTICLES = 12;
 
@@ -10,6 +12,7 @@ export default class NewsFeedComponent extends React.Component {
         super(props);
         this.state = {
             articles: [],
+            loading: true,
         }
 
         this.numArticles = NUM_ARTICLES;
@@ -43,29 +46,48 @@ export default class NewsFeedComponent extends React.Component {
     }
 
     getNewsArticles = () => {
-        console.log('Called real news articles')
-        // TODO: Grab data from /articles endpoint, and populate my state with it
-        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&preferredCategories=helloworld`;
-        console.log(url);
+        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&userId=${this.props.userId}`;
         axios.get(url).then((res) => {
+            console.log(res.data);
             if (res.data.length > 0) {
                 this.lastTimestamp = res.data[res.data.length-1].timestamp;
                 this.setState({ articles: this.state.articles.concat(res.data) });
             }
-            console.log(res);
-            console.log('Received data');
-            console.log(res.data[res.data.length - 1]);
-
         }).catch((err) => {
             console.error(err);
-
+        }).finally(() => {
+            this.setState({ loading: false });
         });
     }
 
-    openArticleLink = (link) => {
-        if (link) {
-            window.open(link, "_blank");
+    openArticleLink = (article) => {
+        if (article.link) {
+            if (article.tags) {
+                const url = 'http://localhost:3000/stats';
+                const data = {
+                    userId: this.props.userId,
+                    categories: article.tags
+                };
+                axios.post(url, data).catch((err) => {
+                    console.error(err);
+                });
+            }
+            window.open(article.link, "_blank");
         }
+    }
+
+    ArticleTags = (props) => {
+        let { tags } = props;
+
+        return (
+            <div className='article-tags'>
+                {
+                    tags.map((item, index) => (
+                    <div key={index} className='article-tag'>{item}</div>
+                    ))
+                }
+            </div>
+        );
     }
 
     NewsFeedItem = (props) => {
@@ -84,7 +106,7 @@ export default class NewsFeedComponent extends React.Component {
         }
 
         return (
-            <div className='news-article-container' onClick={() => this.openArticleLink(article.link)}>
+            <div className='news-article-container' onClick={() => this.openArticleLink(article)}>
                 <div className='news-article'>
                     <div className='news-article--header'>
                         <div className='news-article--header-title'>{article.title}</div>
@@ -96,11 +118,11 @@ export default class NewsFeedComponent extends React.Component {
                     </div>
                     <div className='news-article--summary'>
                         <div className='news-article--summary-title'>Summary</div>
-                        {/* Change to summarizedText */}
-                        {article.fullText} 
+                        <ExternalIcon />
+                        {article.summarizedText ? article.summarizedText : article.fullText}
                         {
                             article.tags && article.tags.length > 0 ?
-                            <div>TODO: Article tags</div>:
+                            <this.ArticleTags tags={article.tags} /> :
                             null
                         }
                     </div>
@@ -115,57 +137,28 @@ export default class NewsFeedComponent extends React.Component {
             900: 2,
             600: 1
         };
-        
-        return (
-            <main className='news-feed'>
-                <div className='news-feed-header'>Your Curated News Feed</div>
-                <div className='articles-container'>
-                    <Masonry
-                        breakpointCols={breakpointColumnsObj}
-                        className='masonry-grid'
-                        columnClassName='masonry-grid-column'
-                    >
-                    {
-                        this.state.articles.map((item, index) => (
-                            <this.NewsFeedItem article={item} />
-                        ))
-                    }
-                    </Masonry>
-                </div>
-            </main>
-        );
+
+        if (this.state.loading) {
+            return <div className='loading-container'><img alt='loading' src={LoadingIcon} /></div>
+        } else {
+            return (
+                <main className='news-feed'>
+                    <div className='news-feed-header'>Your News Feed</div>
+                    <div className='articles-container'>
+                        <Masonry
+                            breakpointCols={breakpointColumnsObj}
+                            className='masonry-grid'
+                            columnClassName='masonry-grid-column'
+                        >
+                        {
+                            this.state.articles.map((item, index) => (
+                                <this.NewsFeedItem key={index} article={item} />
+                            ))
+                        }
+                        </Masonry>
+                    </div>
+                </main>
+            );
+        }
     }
 }
-
-const styles = {
-    container: {
-        justifyContent: 'space-around',
-        alignItems: 'flex-start',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        // border: '0.5px solid black',
-    },
-    containerGridLeft: {
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        border: '0.5px solid black',
-    },
-    containerGridRight: {
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        border: '0.5px solid black',
-    },
-};

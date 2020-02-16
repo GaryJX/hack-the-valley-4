@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[89]:
+# In[67]:
 
 
-from google.cloud import language 
+from google.cloud import language
 from google.cloud.language import enums
 from google.cloud.language import types
 import sys
@@ -13,13 +13,13 @@ import json
 
 # ### Obtain the contents of the file from a text file
 
-# In[90]:
+# In[68]:
 
 
 nlp_data = {}
 
 # read the article from file.
-def read_article(file_name):       
+def read_article(file_name):
     content_array = []
     with open(file_name, 'r') as f:
            data = f.read().replace('\n', '')
@@ -29,14 +29,17 @@ def read_article(file_name):
     return data
 
 
-# In[91]:
+# In[69]:
 
 
 text = read_article("test.txt")
+words = text.split(" ")
+print(len(words))
+
 #text = sys.argv[1]
 
 
-# In[92]:
+# In[70]:
 
 
 # Instantiates a client
@@ -48,7 +51,7 @@ type=enums.Document.Type.PLAIN_TEXT)
 
 # ### Perform sentiment analysis
 
-# In[93]:
+# In[71]:
 
 
 # Detect the sentiment of the text
@@ -64,7 +67,7 @@ sentiment_data["magnitude"] = sentiment.magnitude
 nlp_data["sentiment_data"] = sentiment_data
 
 
-# In[94]:
+# In[72]:
 
 
 from google.cloud import language_v1
@@ -74,7 +77,7 @@ def sample_analyze_sentiment(text_content):
     """
     Analyzing Sentiment in a String
     
-    Args: 
+    Args:
         text_content The text content to analyze
     """
     
@@ -127,7 +130,7 @@ def sample_analyze_sentiment(text_content):
 
 # ### Generate a brief summary
 
-# In[95]:
+# In[73]:
 
 
 # Input article -> split into sentences -> remove stop words -> build a similarity matrix ->
@@ -140,7 +143,7 @@ import numpy as np
 import networkx as nx
 
 
-# In[96]:
+# In[74]:
 
 
 from nltk.corpus import stopwords
@@ -160,18 +163,18 @@ def _create_frequency_table(text_string) -> dict:
             continue
         if word in freqTable:
             freqTable[word] += 1
-        else: 
+        else:
             freqTable[word] = 1
     return freqTable
 
 
-# In[97]:
+# In[75]:
 
 
 #print(text)
 
 
-# In[98]:
+# In[76]:
 
 
 def _score_sentences(sentences, freqTable) -> dict:
@@ -219,12 +222,33 @@ sentences = sent_tokenize(text)
 sentence_scores = _score_sentences(sentences, freq_table)
 #print(sentence_scores)
 threshold = _find_average_score(sentence_scores)
-summary = _generate_summary(sentences, sentence_scores, 1.3 * threshold)
+
+ideal_ratio = 43/561
+
+smallest_diff = sys.maxsize
+best_param = 1.0
+for x in range(12, 19, 1):
+    param = x / 10
+    summary = _generate_summary(sentences, sentence_scores, param * threshold)
+    word_count_sum = summary.split(" ")
+    
+    current_ratio = len(word_count_sum) / len(words)
+    
+    #print("Difference")
+    #print(param)
+    #print((ideal_ratio - current_ratio))
+    
+    if(smallest_diff > abs(ideal_ratio - current_ratio)):
+        smallest_diff = abs(ideal_ratio - current_ratio)
+        best_param = param
+
+summary = _generate_summary(sentences, sentence_scores, best_param * threshold)
 
 nlp_data["summary"] = summary
+print(summary)
 
 
-# In[99]:
+# In[77]:
 
 
 import argparse
@@ -233,7 +257,7 @@ import json
 import os
 
 from google.cloud import language
-import numpy 
+import numpy
 import six
 
 
@@ -265,9 +289,9 @@ def classify(text, verbose=True):
     return result
 
 
-# ### Classify text content 
+# ### Classify text content
 
-# In[100]:
+# In[52]:
 
 
 classification_data = classify(text)
@@ -275,17 +299,17 @@ nlp_data["classification_data"] = classification_data
 
 
 # ### Entity analysis
-# 
+#
 
 # #### Parse the text for Entity Analysis
 
-# In[101]:
+# In[53]:
 
 
 text = text.replace(".", ". ")
 
 
-# In[102]:
+# In[54]:
 
 
 from google.cloud import language_v1
@@ -365,14 +389,14 @@ def sample_analyze_entities(text_content):
 cd = sample_analyze_entities(text)
 
 
-# In[103]:
+# In[55]:
 
 
 # Extract all relevant entities using the Salience value
 res = dictionary()
 
 def extract_based_on_salience(corpus_dict):
-    counter = 0 
+    counter = 0
     for word in corpus_dict:
         if(counter < 5):
             entity_data = (corpus_dict[word]).split("/")
@@ -390,7 +414,7 @@ nlp_data["entity_data"] = entity_data
 
 # ### Entity Extraction
 
-# In[104]:
+# In[56]:
 
 
 import nltk
@@ -408,7 +432,7 @@ def preprocess(sent):
 sent = preprocess(text)
 
 
-# In[105]:
+# In[57]:
 
 
 #print(sent)
@@ -416,7 +440,7 @@ sent = preprocess(text)
 
 # ### Implement Noun Phrase chunking
 
-# In[106]:
+# In[58]:
 
 
 pattern = 'NP: {<DT>?<JJ>*<NN>}'
@@ -425,7 +449,7 @@ cs = cp.parse(sent)
 #print(cs)
 
 
-# In[107]:
+# In[59]:
 
 
 from nltk.chunk import conlltags2tree, tree2conlltags
@@ -440,7 +464,7 @@ ne_tree = nltk.ne_chunk(pos_tag(word_tokenize(text)))
 #print(ne_tree)
 
 
-# In[108]:
+# In[60]:
 
 
 #Using spacy to for entity recognition.
@@ -456,7 +480,7 @@ doc = nlp(text)
 #print([(X, X.ent_iob_, X.ent_type_) for X in doc])
 
 
-# In[109]:
+# In[61]:
 
 
 from bs4 import BeautifulSoup
@@ -489,7 +513,7 @@ items = [x.text for x in article.ents]
 Counter(items).most_common(15)
 
 
-# In[110]:
+# In[62]:
 
 
 #print(article.ents)
@@ -499,31 +523,31 @@ sentences = [x for x in article.sents]
 #print(len(sentences))
 
 
-# In[111]:
+# In[63]:
 
 
 #displacy.render(nlp(str(sentences[5])), jupyter=True, style='ent')
 
 
-# In[112]:
+# In[64]:
 
 
-#[(x.orth_,x.pos_, x.lemma_) for x in [y 
+#[(x.orth_,x.pos_, x.lemma_) for x in [y
 #                                      for y
-#                                      in nlp(str(sentences[8])) 
+#                                      in nlp(str(sentences[8]))
 #                                      if not y.is_stop and y.pos_ != 'PUNCT']]
 
 
-# In[113]:
+# In[65]:
 
 
 #for i in range(0, len(sentences)):
 #    displacy.render(nlp(str(sentences[i])), jupyter=True, style='ent')
 
 
-# ### Convert dict to json and return 
+# ### Convert dict to json and return
 
-# In[114]:
+# In[66]:
 
 
 nlp_json = json.dumps(nlp_data, sort_keys=True)
@@ -531,6 +555,7 @@ print(nlp_json)
 
 
 # In[ ]:
+
 
 
 
