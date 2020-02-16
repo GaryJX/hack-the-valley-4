@@ -3,6 +3,7 @@ import './NewsFeedComponent.scss';
 import axios from 'axios';
 import Masonry from 'react-masonry-css';
 import LoadingIcon from '../../assets/loading.svg';
+import ExternalIcon from '../../assets/external';
 
 const NUM_ARTICLES = 12;
 
@@ -84,7 +85,7 @@ export default class NewsFeedComponent extends React.Component {
             <div className='article-tags'>
                 {
                     tags.map((item, index) => (
-                    <div className='article-tag'>{item}</div>
+                    <div key={index} className='article-tag'>{item}</div>
                     ))
                 }
             </div>
@@ -119,6 +120,7 @@ export default class NewsFeedComponent extends React.Component {
                     </div>
                     <div className='news-article--summary'>
                         <div className='news-article--summary-title'>Summary</div>
+                        <ExternalIcon />
                         {article.summarizedText ? article.summarizedText : article.fullText}
                         {
                             // article.tags && article.tags.length > 0 ?
@@ -153,7 +155,7 @@ export default class NewsFeedComponent extends React.Component {
                         >
                         {
                             this.state.articles.map((item, index) => (
-                                <this.NewsFeedItem article={item} />
+                                <this.NewsFeedItem key={index} article={item} />
                             ))
                         }
                         </Masonry>
