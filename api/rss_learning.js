@@ -105,7 +105,7 @@ var cbcParser = async function () {
             }
 
             if(!isMalformedArticle(article)) {
-                db.collection('articles-canary').where('fullText', '==', article.fullText).get().then(snapshot => {
+                db.collection('articles').where('fullText', '==', article.fullText).get().then(snapshot => {
                     if(!snapshot.empty) {
                         console.log(`${article.title} exists in database, not adding!`);
                         return;
@@ -120,7 +120,6 @@ var cbcParser = async function () {
                                 articleContent += element.textContent + ' ';
                             });
 
-                            replaceAll(articleContent, ['<!--', '-->', '&#x27'])
                             console.log(articleContent + '\n\n\n\n\n\n\n');
                             // summarizeAndStore(article, articleContent);
                         }
@@ -149,37 +148,6 @@ var cnnParser = async function () {
             
             if(!isMalformedArticle(article)) {
                 db.collection('articles').where('fullText', '==', article.fullText).get().then(snapshot => {
-                    if(!snapshot.empty) {
-                        console.log(`${article.title} exists in database, not adding!`);
-                        return;
-                    }
-
-                    request(article.link, function(err, res, body) {
-                        var dom = domParser.parseFromString(body);
-                        var articleBody = dom.getElementsByClassName('story');
-                        if (articleBody) {
-                            var articleContent = '';
-                            articleBody.forEach(element => {
-                                articleContent += element.textContent + ' ';
-                            });
-                            console.log(articleContent);
-
-                            summarizeAndStore(article, articleContent);
-                        }
-                    });
-
-                }).catch(err => {
-                    console.log(`Error checking if article ${article.title} exists.`, err)
-                });
-            }
-
-            if (article.title == '' || article.fullText == '' || article.timestamp == '' || article.link == '') {
-                // console.log("Invaid. Item...");
-                // console.dir(item);
-                // console.dir(article);
-            } else {
-                let query = db.collection('articles').where('fullText', '==', article.fullText).get().then(snapshot => {
-
                     if (!snapshot.empty) {
                         console.log(`${article.title} exists in database, not adding!`);
                         return; // Article exists.
@@ -198,7 +166,7 @@ var cnnParser = async function () {
                         }
                     });
                 }).catch(err => {
-                    console.log(`Error checking if article ${article.title} exists`, err);
+                    console.log(`Error checking if article ${article.title} exists.`, err)
                 });
             }
         });
@@ -235,4 +203,4 @@ function populateFromService(key) {
     parseServiceMapping[key]();
 }
 
-populateFromService('cbc');
+populateFromService('cnn');
