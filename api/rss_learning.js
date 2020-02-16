@@ -164,9 +164,9 @@ var cnnParser = async function () {
                                 articleContent += element.textContent + ' ';
                             });
 
-                            console.log(articleContent + "\n\n\n\n");
-
-                            summarizeAndStore(article, articleContent);
+                            // console.log(articleContent + "\n\n\n\n");
+                            writeToFile(articleContent);
+                            // summarizeAndStore(article, articleContent);
                         }
                     });
                 }).catch(err => {
@@ -178,6 +178,24 @@ var cnnParser = async function () {
 }
 
 var fs = require('fs');
+
+function writeToFile(articleContent) {
+    const baseFileName = 'articleContent-';
+    let fileNum = 1;
+        
+    while (fs.existsSync(`${baseFileName}${fileNum}.txt`)) {
+        fileNum++;
+    }
+    
+    const newFileName = `${baseFileName}${fileNum}.txt`;
+
+    fs.writeFile(newFileName, articleContent, (err) => {
+        if (err) {
+            console.error('ERROR OCCURED!')
+        }
+    })
+
+}
 
 function summarizeAndStore(article, articleContent) {
     if(!articleContent || articleContent == '') return;
@@ -243,5 +261,5 @@ function populateFromService(key) {
     parseServiceMapping[key]();
 }
 
-populateFromService('cbc');
+populateFromService('cnn');
 // summarizeAndStore({x: ''}, 'chor of the ABC News program, "This Week with Sam Donaldson and Cokie Roberts." He served as ABC just preside over the rebuilding of Lower Manhattan. He created affordable housing, improved education and reduced crime throughout the city.  Perhaps what struck me most about Bloomberg was when he talked about the biggest accomplishment of his first 100 days in office as mayor. He did not start bragging about the initiatives he was undertaking. Instead, he touted the');

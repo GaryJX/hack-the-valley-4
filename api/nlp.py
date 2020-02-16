@@ -31,7 +31,8 @@ def read_article(file_name):
 # In[69]:
 
 
-text = read_article("test.txt")
+# text = read_article("test.txt")
+text = read_article(sys.argv[1])
 words = text.split(" ")
 #print(len(words))
 
@@ -552,7 +553,8 @@ sentences = [x for x in article.sents]
 nlp_json = json.dumps(nlp_data, sort_keys=True)
 print(nlp_json)
 
-
+with open(sys.argv[1].split('.')[0] + '.json', 'w') as outfile:
+    json.dump(nlp_json, outfile)
 # In[ ]:
 
 
