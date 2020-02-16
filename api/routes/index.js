@@ -85,7 +85,7 @@ router.get('/articles',[
     //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
     db.collection('articles')
     .orderBy('timestamp','desc')
-    .startAfter(max(0, parseInt(lastTimestamp)))
+    .startAfter(Math.max(0, parseInt(lastTimestamp)))
     .limit(parseInt(numArticles))
     //.where(categories, categories.filter(value => preferredCategories.includes(value)), preferredCategories);
     .get().then((snapshot) => {
