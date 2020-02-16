@@ -45,11 +45,10 @@ var newYorkTimesXML = ['https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xm
     'https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml',
     'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml']
 
-var cbcXML = ['https://www.cbc.ca/cmlink/rss-topstories', 'https://rss.cbc.ca/lineup/world.xml',
-    'https://rss.cbc.ca/lineup/canada.xml', 'https://rss.cbc.ca/lineup/politics.xml', 'https://rss.cbc.ca/lineup/business.xml',
-    'https://rss.cbc.ca/lineup/health.xml', 'https://rss.cbc.ca/lineup/arts.xml', 'https://rss.cbc.ca/lineup/technology.xml']
+var cbcXML = ['https://www.cbc.ca/cmlink/rss-topstories']
 
-var cnnXML = ['http://rss.cnn.com/rss/cnn_topstories.rss', 'http://rss.cnn.com/rss/cnn_world.rss', 'http://rss.cnn.com/rss/cnn_allpolitics.rss', 'http://rss.cnn.com/rss/cnn_tech.rss', 'http://rss.cnn.com/rss/cnn_health.rss']
+    // var cnnXML = ['http://rss.cnn.com/rss/cnn_topstories.rss', 'http://rss.cnn.com/rss/cnn_world.rss', 'http://rss.cnn.com/rss/cnn_allpolitics.rss', 'http://rss.cnn.com/rss/cnn_tech.rss', 'http://rss.cnn.com/rss/cnn_health.rss']
+    var cnnXML = ['http://rss.cnn.com/rss/cnn_topstories.rss'];
 
 console.log("OK");
 
@@ -120,7 +119,7 @@ var cbcParser = async function () {
                                 articleContent += element.textContent + ' ';
                             });
 
-                            console.log(articleContent + '\n\n\n\n\n\n\n');
+                            // console.log(articleContent + '\n\n\n\n\n\n\n');
                             summarizeAndStore(article, articleContent);
                         }
                     });
@@ -155,6 +154,9 @@ var cnnParser = async function () {
 
                     request(article.link, function (err, res, body) {
                         var dom = domParser.parseFromString(body);
+                        if(!dom || dom == '') 
+                        // console.dir(dom);    
+                        console.log(article.link);
                         var articleBody = dom.getElementsByClassName('zn-body__paragraph');
                         if (articleBody) {
                             var articleContent = '';
@@ -175,46 +177,60 @@ var cnnParser = async function () {
     });
 }
 
+var fs = require('fs');
+
 function summarizeAndStore(article, articleContent) {
-    PythonShell.run('nlp.py', { args: [articleContent] }, function (error, results) {
-        if (error) throw error;
+    if(!articleContent || articleContent == '') return;
 
-        // Set result to article.summarizedText
-        if (results && results[0]) {
-            console.dir(results[0]);
-            jsonObj = JSON.parse(results[0]);
-
-            article.summarizedText = jsonObj["summary"];
-            
-            // search tags
-            searchTags = [];
-            for (tag in jsonObj['classification_data']) {
-                searchTags.push(tag);
-            }
-
-            article.searchTags = searchTags;
-            
-            // categories
-            categories = [];
-            for (tag in jsonObj['entity_data']) {
-                categories.push(tag);
-            }
-            
-            article.categories = categories;
-
-            article.sentiment = jsonObj['sentiment_data'];
-
-            if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
-                // console.log("Invaid. Item... Not saving in DB");
-                // console.dir(article);
-            } else {
-                // Save the article to db.
-                console.log(`Saved ${article.title} to db`);
-                console.dir(article);
-                // db.collection('articles').add(article);
-            }
+    fs.writeFileSync('test.txt',articleContent,function(err){
+        if(err) {
+             console.log('oh no!');
+             return;
         }
     });
+        console.log('\n\n\n\n\nrunnn\n\n\n\n\n');
+
+        PythonShell.run('nlp.py', { args: [] }, function (error, results) {
+            if (error) throw error;
+
+            console.log('asdad');
+            console.dir(results);
+            // Set result to article.summarizedText
+            if (results && results[1]) {
+                console.dir(results[1]);
+                jsonObj = JSON.parse(results[1]);
+
+                article.summarizedText = jsonObj["summary"];
+                
+                // search tags
+                searchTags = [];
+                for (tag in jsonObj['classification_data']) {
+                    searchTags.push(tag);
+                }
+
+                article.searchTags = searchTags;
+                
+                // categories
+                categories = [];
+                for (tag in jsonObj['entity_data']) {
+                    categories.push(tag);
+                }
+                
+                article.categories = categories;
+
+                article.sentiment = jsonObj['sentiment_data'];
+
+                if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
+                    console.log("Invaid. Item... Not saving in DB");
+                    console.dir(article);
+                } else {
+                    // Save the article to db.
+                    console.log(`Saved ${article.title} to db`);
+                    console.dir(article);
+                    db.collection('articles').add(article);
+                }
+            }
+        });
 }
 
 var parseServiceMapping = {
@@ -227,4 +243,5 @@ function populateFromService(key) {
     parseServiceMapping[key]();
 }
 
-populateFromService('cnn');
+populateFromService('cbc');
+// summarizeAndStore({x: ''}, 'chor of the ABC News program, "This Week with Sam Donaldson and Cokie Roberts." He served as ABC just preside over the rebuilding of Lower Manhattan. He created affordable housing, improved education and reduced crime throughout the city.  Perhaps what struck me most about Bloomberg was when he talked about the biggest accomplishment of his first 100 days in office as mayor. He did not start bragging about the initiatives he was undertaking. Instead, he touted the');

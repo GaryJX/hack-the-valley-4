@@ -10,7 +10,6 @@ from google.cloud.language import types
 import sys
 import json
 
-
 # ### Obtain the contents of the file from a text file
 
 # In[68]:
@@ -34,7 +33,7 @@ def read_article(file_name):
 
 text = read_article("test.txt")
 words = text.split(" ")
-print(len(words))
+#print(len(words))
 
 #text = sys.argv[1]
 
