@@ -100,17 +100,30 @@ router.get('/articles', [
     console.log(numArticles);
     let resp = [];
     //key by UID, timestamp(descending), then query by category, maybe we will have some sort of relevance score here later?
-    db.collection('articles')
-    .orderBy('timestamp','desc')
-    .startAfter(Math.max(0, parseInt(lastTimestamp)))
-    .limit(parseInt(numArticles))
-    .get().then((snapshot) => {
-      snapshot.docs.forEach(doc => {
-        let data = doc.data();
-        resp.push(data);
+    if (parseInt(lastTimestamp) === -1) {
+      db.collection('articles')
+      .orderBy('timestamp','desc')
+      .limit(parseInt(numArticles))
+      .get().then((snapshot) => {
+        snapshot.docs.forEach(doc => {
+          let data = doc.data();
+          resp.push(data);
+        })
+        res.send(resp);
       })
-      res.send(resp);
-    }) 
+    } else {
+      db.collection('articles')
+      .orderBy('timestamp','desc')
+      .startAfter(Math.max(0, parseInt(lastTimestamp)))
+      .limit(parseInt(numArticles))
+      .get().then((snapshot) => {
+        snapshot.docs.forEach(doc => {
+          let data = doc.data();
+          resp.push(data);
+        })
+        res.send(resp);
+      }) 
+    }
   });
 
 /**

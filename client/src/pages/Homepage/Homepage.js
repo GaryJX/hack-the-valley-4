@@ -16,8 +16,8 @@ export default class Homepage extends React.Component {
         return (
             <main className='home-page'>
                 <section className='details'>
-                    <div className='details--title'>Your news. Summarized. Relevant.</div>
-                    <div className='details--body'>Read news fast. Always stay up to date. With INgest as your news source, nothing will slip past your information network.</div>
+                    <div className='details--title'>Your news. Relevant.<br/>Concise.</div>
+                    <div className='details--body'>Always stay up to date on news you care about. Spend less time reading filler, and more time on what really matters to you.</div>
                     <div className='details--sign-in' onClick={() => this.setState({ showModal: true })}>Sign in or Register</div>
                 </section>
                 <section className='news-image'>
