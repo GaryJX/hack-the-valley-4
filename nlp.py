@@ -32,8 +32,8 @@ def read_article(file_name):
 # In[91]:
 
 
-text = read_article("test.txt")
-#text = sys.argv[0]
+# text = read_article("test.txt")
+text = sys.argv[1]
 
 
 # In[92]:
