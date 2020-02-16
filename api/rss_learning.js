@@ -178,59 +178,112 @@ var cnnParser = async function () {
 }
 
 var fs = require('fs');
+var fsp = require('fs').promises;
 
-function summarizeAndStore(article, articleContent) {
-    if(!articleContent || articleContent == '') return;
+async function summarizeAndStore(article, articleContent) {
+    if(!articleContent || articleContent == '' || articleContent.trim() == '') return;
 
-    fs.writeFileSync('test.txt',articleContent,function(err){
-        if(err) {
-             console.log('oh no!');
-             return;
-        }
-    });
+        // fs.open('test.txt', 'w', function (err, fd) {
+        //     fs.writeSync(fd, articleContent);
+        //     fs.fdatasyncSync(fd);
+        //     fs.closeSync(fd);
+            
+        fs.writeFile('test.txt', articleContent, function(err) {
+            if(err) throw err;
+            PythonShell.run('nlp.py', { args: [] }, function (error, results) {
+                if (error) throw error;
+    
+                console.log('asdad');
+                console.dir(results);
+                // Set result to article.summarizedText
+                if (results && results[2]) {
+                    console.dir(results[2]);
+                    jsonObj = JSON.parse(results[2]);
+    
+                    article.summarizedText = jsonObj["summary"];
+                    
+                    // search tags
+                    searchTags = [];
+                    for (tag in jsonObj['classification_data']) {
+                        searchTags.push(tag);
+                    }
+    
+                    article.searchTags = searchTags;
+                    
+                    // categories
+                    categories = [];
+                    for (tag in jsonObj['entity_data']) {
+                        categories.push(tag);
+                    }
+                    
+                    article.categories = categories;
+    
+                    article.sentiment = jsonObj['sentiment_data'];
+    
+                    if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
+                        console.log("Invaid. Item... Not saving in DB");
+                        console.dir(article);
+                    } else {
+                        // Save the article to db.
+                        console.log(`Saved ${article.title} to db`);
+                        console.dir(article);
+                        db.collection('articles').add(article);
+                    }
+                }
+            });
+        });
+        //});
         console.log('\n\n\n\n\nrunnn\n\n\n\n\n');
 
-        PythonShell.run('nlp.py', { args: [] }, function (error, results) {
-            if (error) throw error;
-
-            console.log('asdad');
-            console.dir(results);
-            // Set result to article.summarizedText
-            if (results && results[1]) {
-                console.dir(results[1]);
-                jsonObj = JSON.parse(results[1]);
-
-                article.summarizedText = jsonObj["summary"];
-                
-                // search tags
-                searchTags = [];
-                for (tag in jsonObj['classification_data']) {
-                    searchTags.push(tag);
-                }
-
-                article.searchTags = searchTags;
-                
-                // categories
-                categories = [];
-                for (tag in jsonObj['entity_data']) {
-                    categories.push(tag);
-                }
-                
-                article.categories = categories;
-
-                article.sentiment = jsonObj['sentiment_data'];
-
-                if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
-                    console.log("Invaid. Item... Not saving in DB");
-                    console.dir(article);
-                } else {
-                    // Save the article to db.
-                    console.log(`Saved ${article.title} to db`);
-                    console.dir(article);
-                    db.collection('articles').add(article);
-                }
-            }
+        /*let shell = new PythonShell('nlp.py', {mode : 'text'});
+        shell.on('message', function (message) {
+            console.log(message);
         });
+        shell.send(articleContent);
+        shell.end();*/
+        
+
+        // PythonShell.run('nlp.py', { args: [] }, function (error, results) {
+        //     if (error) throw error;
+
+        //     console.log('asdad');
+        //     console.dir(results);
+        //     // Set result to article.summarizedText
+        //     if (results && results[1]) {
+        //         console.dir(results[1]);
+        //         jsonObj = JSON.parse(results[1]);
+
+        //         article.summarizedText = jsonObj["summary"];
+                
+        //         // search tags
+        //         searchTags = [];
+        //         for (tag in jsonObj['classification_data']) {
+        //             searchTags.push(tag);
+        //         }
+
+        //         article.searchTags = searchTags;
+                
+        //         // categories
+        //         categories = [];
+        //         for (tag in jsonObj['entity_data']) {
+        //             categories.push(tag);
+        //         }
+                
+        //         article.categories = categories;
+
+        //         article.sentiment = jsonObj['sentiment_data'];
+
+        //         if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
+        //             console.log("Invaid. Item... Not saving in DB");
+        //             console.dir(article);
+        //         } else {
+        //             // Save the article to db.
+        //             console.log(`Saved ${article.title} to db`);
+        //             console.dir(article);
+        //             db.collection('articles').add(article);
+        //         }
+        //     }
+        // });
 }
 
 var parseServiceMapping = {
@@ -243,5 +296,5 @@ function populateFromService(key) {
     parseServiceMapping[key]();
 }
 
-populateFromService('cbc');
+populateFromService('cnn');
 // summarizeAndStore({x: ''}, 'chor of the ABC News program, "This Week with Sam Donaldson and Cokie Roberts." He served as ABC just preside over the rebuilding of Lower Manhattan. He created affordable housing, improved education and reduced crime throughout the city.  Perhaps what struck me most about Bloomberg was when he talked about the biggest accomplishment of his first 100 days in office as mayor. He did not start bragging about the initiatives he was undertaking. Instead, he touted the');

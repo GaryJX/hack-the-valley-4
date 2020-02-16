@@ -24,7 +24,9 @@ def read_article(file_name):
            data = f.read().replace('\n', '')
             
     lines = data.split('. ')
- 
+
+    f.close()
+
     return data
 
 
@@ -32,6 +34,9 @@ def read_article(file_name):
 
 
 text = read_article("test.txt")
+
+#text = str(sys.stdin.read())
+
 words = text.split(" ")
 #print(len(words))
 
@@ -198,8 +203,10 @@ def _find_average_score(sentenceValue) -> int:
         sumValues += sentenceValue[entry]
 
     # Average value of a sentence from original text
-    average = int(sumValues / len(sentenceValue))
-
+    if len(sentenceValue) != 0 :
+        average = int(sumValues / len(sentenceValue))
+    else:
+        average = 0
     return average
 
 
