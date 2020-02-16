@@ -121,7 +121,7 @@ var cbcParser = async function () {
                             });
 
                             console.log(articleContent + '\n\n\n\n\n\n\n');
-                            // summarizeAndStore(article, articleContent);
+                            summarizeAndStore(article, articleContent);
                         }
                     });
 
@@ -162,6 +162,8 @@ var cnnParser = async function () {
                                 articleContent += element.textContent + ' ';
                             });
 
+                            console.log(articleContent + "\n\n\n\n");
+
                             summarizeAndStore(article, articleContent);
                         }
                     });
@@ -174,21 +176,43 @@ var cnnParser = async function () {
 }
 
 function summarizeAndStore(article, articleContent) {
-    PythonShell.run('processText.py', { args: [articleContent] }, function (error, results) {
+    PythonShell.run('nlp.py', { args: [articleContent] }, function (error, results) {
         if (error) throw error;
 
         // Set result to article.summarizedText
         if (results && results[0]) {
-            article.summarizedText = results[0];
-        }
+            console.dir(results[0]);
+            jsonObj = JSON.parse(results[0]);
 
-        if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
-            // console.log("Invaid. Item... Not saving in DB");
-            // console.dir(article);
-        } else {
-            // Save the article to db.
-            console.log(`Saved ${article.title} to db`);
-            db.collection('articles').add(article);
+            article.summarizedText = jsonObj["summary"];
+            
+            // search tags
+            searchTags = [];
+            for (tag in jsonObj['classification_data']) {
+                searchTags.push(tag);
+            }
+
+            article.searchTags = searchTags;
+            
+            // categories
+            categories = [];
+            for (tag in jsonObj['entity_data']) {
+                categories.push(tag);
+            }
+            
+            article.categories = categories;
+
+            article.sentiment = jsonObj['sentiment_data'];
+
+            if (article.title == '' || article.fullText == '' || article.title == '' || article.summarizedText == '' || article.link == '') {
+                // console.log("Invaid. Item... Not saving in DB");
+                // console.dir(article);
+            } else {
+                // Save the article to db.
+                console.log(`Saved ${article.title} to db`);
+                console.dir(article);
+                // db.collection('articles').add(article);
+            }
         }
     });
 }
