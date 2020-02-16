@@ -3,37 +3,7 @@ import './NewsFeedComponent.scss';
 import axios from 'axios';
 import Masonry from 'react-masonry-css';
 
-const ViewTypes = {
-    FULL: 0,
-    HALF_LEFT: 1,
-    HALF_RIGHT: 2,
-};
-
-let containerCount = 0;
-
 const NUM_ARTICLES = 12;
-
-class CellContainer extends React.Component {
-    constructor(props) {
-        super(props);
-        this.containerId = containerCount++;
-    }
-
-    render() {
-        const { data } = this.props;
-
-        return (
-            <div className='news-article' {...this.props}>
-                <div className='news-article--header'>
-                    {data.title}
-                </div>
-                <div className='news-article--summary'>
-                    {data.summarizedText}
-                </div>
-            </div>
-        );
-    }
-}
 
 export default class NewsFeedComponent extends React.Component {
     constructor(props) {
@@ -50,6 +20,7 @@ export default class NewsFeedComponent extends React.Component {
 
     componentDidMount() {
         window.addEventListener('scroll', this.onScroll, false);
+
     }
 
     componentWillUnmount() {
@@ -64,19 +35,26 @@ export default class NewsFeedComponent extends React.Component {
     }
 
     hasReachedBottom = () => {
-        return (
-            document.body.offsetHeight + document.body.scrollTop ===
-            document.body.scrollHeight
-          );
+        const windowHeight = window.innerHeight + window.pageYOffset;
+        const body = document.body;
+        const html = document.documentElement;
+        const docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+        return (windowHeight + 5) >= (docHeight);
     }
 
     getNewsArticles = () => {
+        console.log('Called real news articles')
         // TODO: Grab data from /articles endpoint, and populate my state with it
-        axios.get(`http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&preferredCategories=helloworld`).then((res) => {
+        const url = `http://localhost:3000/articles?numArticles=${NUM_ARTICLES}&lastTimestamp=${this.lastTimestamp}&preferredCategories=helloworld`;
+        console.log(url);
+        axios.get(url).then((res) => {
+            if (res.data.length > 0) {
+                this.lastTimestamp = res.data[res.data.length-1].timestamp;
+                this.setState({ articles: this.state.articles.concat(res.data) });
+            }
             console.log(res);
             console.log('Received data');
-            this.lastTimestamp = res.data[res.data.length-1].timestamp;
-            this.setState({ articles: this.state.articles.concat(res.data) });
+            console.log(res.data[res.data.length - 1]);
 
         }).catch((err) => {
             console.error(err);
