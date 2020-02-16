@@ -51,6 +51,8 @@ var cbcXML = ['https://www.cbc.ca/cmlink/rss-topstories', 'https://rss.cbc.ca/li
 
 var cnnXML = ['http://rss.cnn.com/rss/cnn_topstories.rss', 'http://rss.cnn.com/rss/cnn_world.rss', 'http://rss.cnn.com/rss/cnn_allpolitics.rss', 'http://rss.cnn.com/rss/cnn_tech.rss', 'http://rss.cnn.com/rss/cnn_health.rss']
 
+console.log("OK");
+
 function addArticle(article) {
     // Check if this article exists in db.
     let query = db.collection('articles').where('fullText', '==', article.fullText).get().then(snapshot => {
@@ -85,18 +87,49 @@ var newYorkTimesParser = async function () {
     });
 }
 
+function isMalformedArticle(article) {
+    return article.title == '' || article.fullText == '' || article.timestamp == '' || article.link == ''
+}
+
 var cbcParser = async function () {
     cbcXML.forEach(async link => {
         let feed = await parser.parseURL(link);
         feed.items.forEach(item => {
-            addArticle({
+            var article = {
                 title: item.title || '',
                 fullText: item.contentSnippet || '',
                 summarizedText: item.contentSnippet || '',
                 author: item.creator || '',
                 timestamp: new Date(item.isoDate || '').getTime() || '',
                 link: item.link || ''
-            });
+            }
+
+            if(!isMalformedArticle(article)) {
+                db.collection('articles-canary').where('fullText', '==', article.fullText).get().then(snapshot => {
+                    if(!snapshot.empty) {
+                        console.log(`${article.title} exists in database, not adding!`);
+                        return;
+                    }
+
+                    request(article.link, function(err, res, body) {
+                        var dom = domParser.parseFromString(body);
+                        var articleBody = dom.getElementsByClassName('story');
+                        if (articleBody) {
+                            var articleContent = '';
+                            articleBody.forEach(element => {
+                                articleContent += element.textContent + ' ';
+                            });
+
+                            replaceAll(articleContent, ['<!--', '-->', '&#x27'])
+                            console.log(articleContent + '\n\n\n\n\n\n\n');
+                            // summarizeAndStore(article, articleContent);
+                        }
+                    });
+
+                }).catch(err => {
+                    console.log(`Error checking if article ${article.title} exists.`, err)
+                });
+            }
         });
     });
 }
@@ -113,6 +146,32 @@ var cnnParser = async function () {
                 timestamp: new Date(item.isoDate || '').getTime() || '',
                 link: item.guid || ''
             };
+            
+            if(!isMalformedArticle(article)) {
+                db.collection('articles').where('fullText', '==', article.fullText).get().then(snapshot => {
+                    if(!snapshot.empty) {
+                        console.log(`${article.title} exists in database, not adding!`);
+                        return;
+                    }
+
+                    request(article.link, function(err, res, body) {
+                        var dom = domParser.parseFromString(body);
+                        var articleBody = dom.getElementsByClassName('story');
+                        if (articleBody) {
+                            var articleContent = '';
+                            articleBody.forEach(element => {
+                                articleContent += element.textContent + ' ';
+                            });
+                            console.log(articleContent);
+
+                            summarizeAndStore(article, articleContent);
+                        }
+                    });
+
+                }).catch(err => {
+                    console.log(`Error checking if article ${article.title} exists.`, err)
+                });
+            }
 
             if (article.title == '' || article.fullText == '' || article.timestamp == '' || article.link == '') {
                 // console.log("Invaid. Item...");
@@ -176,4 +235,4 @@ function populateFromService(key) {
     parseServiceMapping[key]();
 }
 
-populateFromService('cnn');
+populateFromService('cbc');
